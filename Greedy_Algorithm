@@ -1,0 +1,72 @@
+package com.company;
+import java.io.*;
+import java.nio.file.Files;
+import java.util.List;
+
+public class Greedy_Algorithm {
+
+	static class Item {
+		private double weight; //вес
+		private int value;     //ценность
+
+		public Item () {}
+
+		public Item (double weight, int value){
+			this.weight=weight;
+			this.value=value;
+		}
+		public double valuePerUnitOfWeight(){
+			return value/weight;
+		} //относительная ценность
+		public double getWeight() {
+			return weight;
+		}
+
+		public int getValue() {
+			return value;
+		}
+
+	}
+public static void main(String[] args) throws IOException {
+		File fileName=new File ("/Users/liubovkaigorodova/Desktop/Input.txt");
+		List<String> lines = Files.readAllLines(fileName.toPath());  //считываем строки из файла
+		double weightMax = Double.parseDouble(lines.get(0).split(" ")[0]); //распарсим полученные строки/максимальный вес рюкзака
+		int n = Integer.parseInt(lines.get(0).split(" ")[1]); //количество предметов/размер массива
+
+		final Item [] array = new Item [n];
+		for (int i=1; i<=n;i++) //начинаем с 1 строки, тк нулевая строка считана в максимальный вес и количество предметов
+		{   Item temp=new Item(); //заполняем массив переменными типа Item
+			temp.value=Integer.parseInt(lines.get(i).split(" ")[0]);
+			temp.weight=Double.parseDouble(lines.get(i).split(" ")[1]);
+			temp.valuePerUnitOfWeight();
+			array [i-1] = temp; //i-1, тк запись идет в элемент массива с индексом 0
+		}
+
+		for (int i=0; i<n;i++) //сортировка пузырьком в обратную сторону <
+		{
+			for (int j = 1; j < n-i; j++)
+			{
+				if (array[j - 1].valuePerUnitOfWeight() < array[j].valuePerUnitOfWeight()) //сравниваем попарно элементы (с предыдущим элементом)
+				{
+					Item temp = new Item();
+					temp = array[j]; //меняем элементы местами через третью переменную
+					array[j] = array[j - 1];
+					array[j - 1] = temp;
+				}
+			}
+		}
+
+		int valueMax=0; //максимальная ценность
+		double weightTemp=0; //через эту переменную накапливаем вес
+
+		for (int i=0; i<n; i++)
+		{
+			if (weightTemp + array[i].weight<=weightMax) //проверяем не превышает ли накопленный вес размеры рюкзака
+			{
+				valueMax+=array[i].getValue(); //суммируем ценность
+				weightTemp+=array[i].getWeight(); //суммируем вес
+			}
+		}
+		System.out.println (valueMax);
+
+		}}
