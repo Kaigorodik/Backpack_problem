@@ -61,12 +61,20 @@ public static void main(String[] args) throws IOException {
 
 		for (int i=0; i<n; i++)
 		{
-			if (weightTemp + array[i].weight<=weightMax) //проверяем не превышает ли накопленный вес размеры рюкзака
+			if (weightTemp + array[i].weight<=weightMax) //проверяем не превышает ли накопленный вес + вес нового объекта размер рюкзака
+				                                         //берем объект целиком
 			{
 				valueMax+=array[i].getValue(); //суммируем ценность
 				weightTemp+=array[i].getWeight(); //суммируем вес
 			}
+			else //берем часть объекта
+				{
+					valueMax+=((weightMax-weightTemp)/(double) array[i].getWeight())*array[i].getValue();
+
+					weightTemp=weightMax; //полный рюкзак
+				}
 		}
 		System.out.println (valueMax);
 
 		}}
+
