@@ -1,0 +1,65 @@
+package com.company;
+import java.io.*;
+import java.nio.file.Files;
+import java.util.List;
+
+public class Brute_Force_Algorithm {
+
+    static class Item {
+        private double weight; //вес
+        private int value; //ценность
+
+        public Item () {}
+
+        public Item (double weight, int value){
+            this.weight=weight;
+            this.value=value;
+        }
+
+        public double getWeight() {
+            return weight;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+    }
+
+    public static void main(String[] args) throws IOException {
+        File fileName=new File ("/Users/liubovkaigorodova/Desktop/Input.txt");
+        List<String> lines = Files.readAllLines(fileName.toPath()); //считываем строки из файла
+        double weightMax = Double.parseDouble(lines.get(0).split(" ")[0]); //распарсим полученные строки/максимальный вес рюкзака
+        int n = Integer.parseInt(lines.get(0).split(" ")[1]); //количество предметов/размер массива
+
+        final Item [] array = new Item [n];
+        for (int i=1; i<=n;i++) //начинаем с 1 строки, тк нулевая строка считана в максимальный вес и количество предметов
+        {   Item temp=new Item(); //заполняем массив переменными типа Item
+            temp.value=Integer.parseInt(lines.get(i).split(" ")[0]);
+            temp.weight=Double.parseDouble(lines.get(i).split(" ")[1]);
+            array [i-1] = temp; //i-1, тк запись идет в элемент массива с индексом 0
+        }
+
+        int valueMax=0; //максимальная ценность
+        int set; //набор предметов
+
+        for (set = 0; set<Math.pow(2,n);set++) //внешний цикл по наборам/если n предметов, то 2^n наборов
+        {
+            double weightTemp = 0; int valueTemp = 0; //обнуляем вес и ценность
+            for (int i = 0; i < n; i++) //внутренним циклом суммируем вес и ценность по предметам
+            {
+                int mask = 1 << i; //формируем новую маску/берем 1 и сдвигаем влево на i разрядов
+                if ((set & mask) > 0) //умножаем маску на номер набора (поразрядное умножение) и проверяем >0 или нет
+                {
+                    valueTemp += array[i].getValue();
+                    weightTemp += array[i].getWeight();
+                }
+            }
+            if (weightTemp<=weightMax && valueTemp>valueMax) //проверяем входит ли набор по весу в рюкзак и при этом его ценность должна быть больше макс
+            {
+                valueMax=valueTemp; //перезаписываем макс ценность
+            }
+        }
+        System.out.println (valueMax);
+
+        }}
